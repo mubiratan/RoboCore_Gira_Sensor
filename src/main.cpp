@@ -8,14 +8,12 @@
  * obstaculo e voltando a andar para frente.
 ********************************************************/
 
-#include "AntiColisao.h"
-
-AntiColisao antiColisao;
+#include "AntiColisao.hpp"
 
 void setup() {  
-  antiColisao.setup_anti_colisao();
+  setup_anti_colisao();
 }
 
 void loop() {
-  antiColisao.loop_anti_colisao();  
+  loop_anti_colisao();  
 }
