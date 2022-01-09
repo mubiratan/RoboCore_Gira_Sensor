@@ -1,6 +1,10 @@
-#include "AntiColisao.h"
+#include "AntiColisao.hpp"
+#include "Helper.hpp"
 
-void AntiColisao::setup_anti_colisao() {
+VespaServo servo;
+VespaMotors motores;
+
+void setup_anti_colisao() {
     pinMode(PINO_TRIGGER, OUTPUT); //configuracao do pino trigger como saida
     pinMode(PINO_ECHO, INPUT); //configuracao do pino echo como entrada
     digitalWrite(PINO_TRIGGER, LOW); //inicia o pino trigger com o nivel logico baixo
@@ -9,7 +13,10 @@ void AntiColisao::setup_anti_colisao() {
     servo.attach(VESPA_SERVO_S4, SERVO_MIN, SERVO_MAX);
 }
 
-void AntiColisao::loop_anti_colisao() {
+void loop_anti_colisao() {
+    std::stack<uint_fast8_t> pilha{};
+    int distancia;
+    
     while(true) 
     {
         delay(ESPERA); //aguarda o tempo de espera para leitura do sensor
@@ -26,15 +33,15 @@ void AntiColisao::loop_anti_colisao() {
             {
                 motores.stop();
                 delay(ESPERA);          
-                verificaObstaculos();
+                verificaObstaculos(servo, pilha);
 
                 // Enquanto tiver 2 obstáculos dos lados, continua andanda para trás
                 while (pilha.size() == 2) {
                     pilha.pop();
                     pilha.pop();
-                    andaParaTras(ESPERA_MOVIMENTO);
+                    andaParaTras(motores, ESPERA_MOVIMENTO);
                     delay(ESPERA);
-                    verificaObstaculos();
+                    verificaObstaculos(servo, pilha);
                 }
 
                 // Se a pilha estiver vazia, ou seja, sem obstáculos dos lados
@@ -42,25 +49,25 @@ void AntiColisao::loop_anti_colisao() {
                     if (millis() % 2 == 0) { // Gira para direita
                         delay(ESPERA);
                         pilha.pop();
-                        giraRobo(VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
+                        giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
                         motores.forward(VELOCIDADE);
                     } else { // Gira para esquerda
                         delay(ESPERA);
                         pilha.pop();
-                        giraRobo(-VELOCIDADE, VELOCIDADE, ROTACIONA_90);
+                        giraRobo(motores, -VELOCIDADE, VELOCIDADE, ROTACIONA_90);
                         delay(ESPERA);
                         motores.forward(VELOCIDADE);
                     }    
                 } else if(pilha.top() == OBSTACULO_ESQUERDA) {
                     delay(ESPERA);
                     pilha.pop();
-                    giraRobo(VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
+                    giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
                     delay(ESPERA);
                     motores.forward(VELOCIDADE);     
                 } else {
                     delay(ESPERA);
                     pilha.pop();
-                    giraRobo(-VELOCIDADE, VELOCIDADE, ROTACIONA_90);
+                    giraRobo(motores,-VELOCIDADE, VELOCIDADE, ROTACIONA_90);
                     delay(ESPERA);
                     motores.forward(VELOCIDADE);     
                 }                
@@ -72,25 +79,14 @@ void AntiColisao::loop_anti_colisao() {
     }
 }
 
-// Anda para trás
-inline void AntiColisao::andaParaTras(const uint_fast8_t espera_movimento)
-{
-    // Anda para trás
-    motores.stop(); //para os motores do robo
-    delay(ESPERA);
-    motores.backward(VELOCIDADE); //recua o robo girando os motores para tras
-    delay(espera_movimento); //matem o movimento do robo
-    motores.stop(); //para os motores do robo
-}
-
 // Gira o robô para os lados e verifica se tem obstáculos 
-void AntiColisao::verificaObstaculos() 
+void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha) 
 {
-    delay(ESPERA);
+    int distancia;
 
     // Gira Sensor para direita
     servo.write(0);
-    delay(ESPERA_GIRO_SENSOR); 
+    delay(ESPERA_GIRO_SENSOR);
     distancia = sensor_ultrassonico();
     
     if (distancia <= DISTANCIA_OBSTACULO)
@@ -111,22 +107,12 @@ void AntiColisao::verificaObstaculos()
     }
 
     // Volta pra o centro
-    delay(ESPERA);
+    delay(ESPERA_GIRO_SENSOR);
     servo.write(90);    
 }
 
-// Gira o robô para os lados
-inline void AntiColisao::giraRobo(const uint_fast8_t velocidade, const uint_fast8_t velocidade2, const uint_fast8_t tempo_espera)
-{   
-    delay(ESPERA);
-    motores.turn(velocidade, velocidade2);
-    delay(tempo_espera); //matem o movimento do robo
-    motores.stop(); //para os motores do robo
-    delay(ESPERA);
-}
-
 //funcao para a leitura do sensor
-inline int AntiColisao::sensor_ultrassonico() 
+int sensor_ultrassonico() 
 {
     //realiza o pulso de 10 microsegundos no trigger do sensor
     digitalWrite(PINO_TRIGGER, HIGH);
