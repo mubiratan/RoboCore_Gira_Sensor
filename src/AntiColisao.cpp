@@ -17,27 +17,23 @@ void setup_anti_colisao() {
 
 void loop_anti_colisao() {
     // Ponteiro pra função
-    int (*pSensor)() = &sensor_ultrassonico;
+    int (*pSensorUltrassonico)() = &sensor_ultrassonico;
     void (*pVerificaObstaculos)(VespaServo &, std::stack<uint_fast8_t> &) = &verificaObstaculos;
     
     // Pilha 
     std::stack<uint_fast8_t> pilha{};
-
-    int distancia  = 0;
     
     while(true) 
     {
         delay(ESPERA); //aguarda o tempo de espera para leitura do sensor
-        distancia = pSensor(); //armazena a distancia lida pelo sensor a variavel distancia
 
         //verifica se a distancia lida pelo sensor e menor ou igual ao valor configurado na variavel "DISTANCIA_OBSTACULO"
-        if (distancia <= DISTANCIA_OBSTACULO) //se for verdadeiro
+        if (pSensorUltrassonico() <= DISTANCIA_OBSTACULO) //se for verdadeiro
         {            
             delay(ESPERA); //aguarda o tempo de espera para leitura do sensor
-            distancia = pSensor(); //atualiza a leitura do sensor
 
             //confirma se a distancia lida pelo sensor e menor ou igual ao valor configurado na variavel "DISTANCIA_OBSTACULO"
-            if (distancia <= DISTANCIA_OBSTACULO) 
+            if (pSensorUltrassonico() <= DISTANCIA_OBSTACULO) 
             {
                 motores.stop();
                 delay(ESPERA);          
