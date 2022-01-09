@@ -1,6 +1,7 @@
 #ifndef HELPER_HPP
 #define HELPER_HPP
 
+#include <stack>
 #include "RoboCore_Vespa.h"
 
 //declaracao dos pinos do sensor
@@ -28,6 +29,7 @@ const uint_fast8_t ESPERA_GIRO_SENSOR = 300;
 // Funcoes
 void andaParaTras(VespaMotors &, const uint_fast8_t espera);
 void giraRobo(VespaMotors &, const uint_fast8_t, const uint_fast8_t, const uint_fast8_t);
-
+void verificaObstaculos(VespaServo &, std::stack<uint_fast8_t> &);
+int sensor_ultrassonico();
 
 #endif
