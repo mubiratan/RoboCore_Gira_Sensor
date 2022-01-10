@@ -9,6 +9,7 @@ const uint_fast8_t PINO_TRIGGER = 25;
 const uint_fast8_t PINO_ECHO = 26;
 //declaracao da variavel que armazena a distancia do obstaculo
 const uint_fast8_t DISTANCIA_OBSTACULO = 30;
+const uint_fast8_t DISTANCIA_OBSTACULO_LONGE = 40;
 //declaracao das variaveis que armazenam a velocidade de giro e de reta dos motores do robo
 const uint_fast8_t VELOCIDADE = 80;
 //declaracao da variavel que armazena o tempo de espera entre leituras do sensor

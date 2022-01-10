@@ -30,11 +30,20 @@ void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha)
     // Gira Sensor para direita
     servo.write(0);
     delay(ESPERA_GIRO_SENSOR);
-    distancia = sensor_ultrassonico();
+    //distancia = sensor_ultrassonico();
     
-    if (distancia <= DISTANCIA_OBSTACULO)
+    if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
     {
         pilha.push(OBSTACULO_DIREITA);
+
+    } else {
+        delay(ESPERA);
+        //distancia = sensor_ultrassonico();
+
+        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO_LONGE)
+        {
+            pilha.push(OBSTACULO_DIREITA);
+        }
     }
 
     delay(ESPERA);
@@ -42,11 +51,19 @@ void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha)
     // Gira Sensor para esquerda
     servo.write(180);
     delay(ESPERA_GIRO_SENSOR);
-    distancia = sensor_ultrassonico();
+    //distancia = sensor_ultrassonico();
     
-    if (distancia <= DISTANCIA_OBSTACULO)
+    if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
     {
         pilha.push(OBSTACULO_ESQUERDA);
+    } else {
+        delay(ESPERA);
+        //distancia = sensor_ultrassonico();
+
+        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO_LONGE)
+        {
+            pilha.push(OBSTACULO_ESQUERDA);
+        }
     }
 
     // Volta pra o centro
