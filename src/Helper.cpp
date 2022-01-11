@@ -25,12 +25,9 @@ void giraRobo(VespaMotors &motores, const uint_fast8_t velocidade, const uint_fa
 // Gira o robô para os lados e verifica se tem obstáculos 
 void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha) 
 {
-    int distancia;
-
     // Gira Sensor para direita
     servo.write(0);
     delay(ESPERA_GIRO_SENSOR);
-    //distancia = sensor_ultrassonico();
     
     if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
     {
@@ -38,7 +35,6 @@ void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha)
 
     } else {
         delay(ESPERA);
-        //distancia = sensor_ultrassonico();
 
         if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO_LONGE)
         {
@@ -51,14 +47,12 @@ void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha)
     // Gira Sensor para esquerda
     servo.write(180);
     delay(ESPERA_GIRO_SENSOR);
-    //distancia = sensor_ultrassonico();
     
     if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
     {
         pilha.push(OBSTACULO_ESQUERDA);
     } else {
         delay(ESPERA);
-        //distancia = sensor_ultrassonico();
 
         if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO_LONGE)
         {
