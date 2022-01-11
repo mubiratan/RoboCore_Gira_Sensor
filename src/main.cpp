@@ -18,7 +18,7 @@ const int LED_Vespa = 15;
 const uint32_t TEMPO_ATUALIZACAO_VBAT = 60000; // [ms]
 
 /** Tarefa em Core separado
-**  Se a bateria ficar com a voltagem abaixo de 5V, o pisca LED irá piscar
+**  Se a bateria ficar com a voltagem abaixo de 5V, o LED irá piscar
 **/
 void Task1code( void * pvParameters ) {
   uint32_t capacidade;
