@@ -15,10 +15,10 @@ TaskHandle_t Task1;
 VespaBattery vbat;
 
 const int LED_Vespa = 15;
-const uint32_t TEMPO_ATUALIZACAO_VBAT = 5000; // [ms]
+const uint32_t TEMPO_ATUALIZACAO_VBAT = 60000; // [ms]
 
 /** Tarefa em Core separado
-**  Se a bateria ficar com a voltagem abaixo de 5V, o pisca ficará acesso
+**  Se a bateria ficar com a voltagem abaixo de 5V, o pisca LED irá piscar
 **/
 void Task1code( void * pvParameters ) {
   uint32_t capacidade;
