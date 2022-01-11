@@ -6,6 +6,7 @@
 VespaServo servo;
 VespaMotors motores;
 
+// Setup Principal
 void setup_anti_colisao() {
     pinMode(PINO_TRIGGER, OUTPUT); //configuracao do pino trigger como saida
     pinMode(PINO_ECHO, INPUT); //configuracao do pino echo como entrada
@@ -15,6 +16,7 @@ void setup_anti_colisao() {
     servo.attach(VESPA_SERVO_S4, SERVO_MIN, SERVO_MAX);
 }
 
+// Loop Principal
 void loop_anti_colisao() {
     // Ponteiro pra função
     int (*pSensorUltrassonico)() = &sensor_ultrassonico;
