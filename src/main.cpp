@@ -21,7 +21,7 @@ const uint32_t TEMPO_ATUALIZACAO_VBAT = 60000; // [ms]
 **  Se a bateria ficar com a voltagem abaixo de 5V, o LED irá piscar
 **/
 void Task1code( void * pvParameters ) {
-  uint32_t capacidade;
+  uint8_t capacidade;
 
   while(true)
   {
