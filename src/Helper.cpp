@@ -13,7 +13,7 @@ void andaParaTras(VespaMotors &motores, const uint_fast8_t espera_movimento)
 }
 
 // Gira o robô para os lados
-void giraRobo(VespaMotors &motores, const uint_fast8_t velocidade, const uint_fast8_t velocidade2, const uint_fast8_t tempo_espera)
+void giraRobo(VespaMotors &motores, const uint_fast8_t &velocidade, const uint_fast8_t &velocidade2, const uint_fast8_t &tempo_espera)
 {   
     delay(ESPERA);
     motores.turn(velocidade, velocidade2);
@@ -25,38 +25,29 @@ void giraRobo(VespaMotors &motores, const uint_fast8_t velocidade, const uint_fa
 // Gira o robô para os lados e verifica se tem obstáculos 
 void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha) 
 {
-    // Gira Sensor para direita
-    servo.write(0);
-    delay(ESPERA_GIRO_SENSOR);
-    
-    if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
+    removePilha(pilha);
+    uint_fast8_t contadorDireita = 0;
+    uint_fast8_t contadorEsquerda = 0;
+
+    for(int x = 0; x < sizeof(angulo) / sizeof(angulo[0]); x++)
     {
-        pilha.push(OBSTACULO_DIREITA);
-
-    } else {
+        // Gira Sensor
+        servo.write(angulo[x]);
+        delay(ESPERA_GIRO_SENSOR);
+        
         delay(ESPERA);
-
-        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO_LONGE)
+        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
         {
-            pilha.push(OBSTACULO_DIREITA);
-        }
-    }
-
-    delay(ESPERA);
-    
-    // Gira Sensor para esquerda
-    servo.write(180);
-    delay(ESPERA_GIRO_SENSOR);
-    
-    if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
-    {
-        pilha.push(OBSTACULO_ESQUERDA);
-    } else {
-        delay(ESPERA);
-
-        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO_LONGE)
-        {
-            pilha.push(OBSTACULO_ESQUERDA);
+            if(angulo[x] < 90 && contadorDireita == 0) 
+            {
+                pilha.push(OBSTACULO_DIREITA);
+                ++contadorDireita;
+            }   
+            else if (angulo[x] > 90 && contadorEsquerda == 0)
+            {
+                pilha.push(OBSTACULO_ESQUERDA);
+                ++contadorEsquerda;
+            }
         }
     }
 
@@ -76,4 +67,10 @@ int sensor_ultrassonico()
     //mede o pulso em microsegundos retornado para o echo do sensor
     //e converte o tempo para distancia divindo por 58
     return pulseIn(PINO_ECHO, HIGH) / 58;
+}
+
+void removePilha(std::stack<uint_fast8_t> &pilha)
+{
+    for(int x = 0; x < pilha.size(); x++)
+        pilha.pop();
 }
