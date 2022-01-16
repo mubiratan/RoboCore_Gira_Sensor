@@ -26,6 +26,7 @@ void Task1code( void * pvParameters ) {
   while(true)
   {
     capacidade = (vbat.readVoltage() * 100 / 9000);
+
     if(capacidade < 5.0)
     {
       while(true)
