@@ -1,7 +1,7 @@
 #include <stack>
 #include "AntiColisao.hpp"
-#include "Helper.hpp"
 #include "RoboCore_Vespa.h"
+#include "Helper.hpp"
 
 VespaServo servo;
 VespaMotors motores;
@@ -20,60 +20,76 @@ void setup_anti_colisao() {
 void loop_anti_colisao() {
     // Pilha 
     std::stack<uint_fast8_t> pilha{};
-    
+    bool sensor = true;
+    int sensor_angulo[] = {90, 80, 70, 60, 90, 100, 110, 120};
+    int count = 0;
+
     while(true) 
     {
-        delay(ESPERA); //aguarda o tempo de espera para leitura do sensor
+        delay(ESPERA);
+        motores.forward(VELOCIDADE); 
 
-        //verifica se a distancia lida pelo sensor e menor ou igual ao valor configurado na variavel "DISTANCIA_OBSTACULO"
-        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO) //se for verdadeiro
-        {            
-            delay(ESPERA); //aguarda o tempo de espera para leitura do sensor
-
-            //confirma se a distancia lida pelo sensor e menor ou igual ao valor configurado na variavel "DISTANCIA_OBSTACULO"
-            if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO) 
+        while(sensor)
+        {
+            servo.write(sensor_angulo[count]);
+            delay(ESPERA);
+            if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
             {
                 motores.stop();
-                delay(ESPERA);          
-                verificaObstaculos(servo, pilha);
-
-                // Enquanto tiver obstáculos dos lados, continua andanda para trás
-                while (pilha.size() >= 2) {
-                    removePilha(pilha);
-                    andaParaTras(motores, ESPERA_MOVIMENTO);
-                    delay(ESPERA);
-                    verificaObstaculos(servo, pilha);
-                }
-
-                // Se a pilha estiver vazia, ou seja, sem obstáculos dos lados
-                if (pilha.empty()) {
-                    if (millis() % 2 == 0) { // Gira para direita
-                        delay(ESPERA);
-                        giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
-                        motores.forward(VELOCIDADE);
-                    } else { // Gira para esquerda
-                        delay(ESPERA);
-                        giraRobo(motores, -VELOCIDADE, VELOCIDADE, ROTACIONA_90);
-                        delay(ESPERA);
-                        motores.forward(VELOCIDADE);
-                    }    
-                } else if(pilha.top() == OBSTACULO_ESQUERDA) {
-                    delay(ESPERA);
-                    removePilha(pilha);
-                    giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
-                    delay(ESPERA);
-                    motores.forward(VELOCIDADE);     
-                } else {
-                    delay(ESPERA);
-                    removePilha(pilha);
-                    giraRobo(motores,-VELOCIDADE, VELOCIDADE, ROTACIONA_90);
-                    delay(ESPERA);
-                    motores.forward(VELOCIDADE);     
-                }                
+                sensor = false;
+                break;
             }
-        } else { //caso a distancia do sensor não seja menor que o valor "DISTANCIA_OBSTACULO" na primeira verificacao
-
-            motores.forward(VELOCIDADE); //mantem o robo andando para frente
+            
+            ++count;
+            if(count == sizeof(sensor_angulo) / sizeof(sensor_angulo[0]))
+                count = 0;            
         }
+
+        motores.stop();            
+        delay(ESPERA); //aguarda o tempo de espera para leitura do sensor
+
+        //confirma se a distancia lida pelo sensor e menor ou igual ao valor configurado na variavel "DISTANCIA_OBSTACULO"
+        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO) 
+        {
+            motores.stop();
+            delay(ESPERA);          
+            verificaObstaculos(servo, pilha);
+
+            // Enquanto tiver obstáculos dos lados, continua andanda para trás
+            while (pilha.size() >= 2) {
+                removePilha(pilha);
+                andaParaTras(motores, ESPERA_MOVIMENTO);
+                delay(200);
+                verificaObstaculos(servo, pilha);
+            }
+
+            // Se a pilha estiver vazia, ou seja, sem obstáculos dos lados
+            if (pilha.empty()) {
+                if (millis() % 2 == 0) { // Gira para direita
+                    delay(200);
+                    giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
+                    motores.forward(VELOCIDADE);
+                } else { // Gira para esquerda
+                    delay(200);
+                    giraRobo(motores, -VELOCIDADE, VELOCIDADE, ROTACIONA_90);
+                    delay(ESPERA);
+                    //motores.forward(VELOCIDADE);
+                }    
+            } else if(pilha.top() == OBSTACULO_ESQUERDA) {
+                delay(200);
+                removePilha(pilha);
+                giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
+                delay(200);
+                //motores.forward(VELOCIDADE);     
+            } else {
+                delay(200);
+                removePilha(pilha);
+                giraRobo(motores,-VELOCIDADE, VELOCIDADE, ROTACIONA_90);
+                delay(200);
+                //motores.forward(VELOCIDADE);     
+            }                
+        }
+
+        sensor = true;
     }
 }
