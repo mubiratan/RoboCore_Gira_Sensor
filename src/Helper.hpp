@@ -15,6 +15,7 @@ const uint_fast8_t DISTANCIA_OBSTACULO_LONGE = 40;
 const uint_fast8_t VELOCIDADE = 70;
 //declaracao da variavel que armazena o tempo de espera entre leituras do sensor
 const uint_fast8_t ESPERA = 100;
+const uint_fast8_t ESPERA_GIRO = 200;
 //declaracao da variavel que armazena o tempo que os movimentos de desvio irao durar
 const unsigned int ESPERA_MOVIMENTO = 2000;
 const unsigned int ROTACIONA_90 = ESPERA_MOVIMENTO;

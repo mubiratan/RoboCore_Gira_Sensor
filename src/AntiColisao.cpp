@@ -21,14 +21,16 @@ void loop_anti_colisao() {
     // Pilha 
     std::stack<uint_fast8_t> pilha{};
     bool sensor = true;
-    int sensor_angulo[] = {90, 80, 70, 60, 90, 100, 110, 120};
-    int count = 0;
+    uint_fast8_t sensor_angulo[] = {90, 80, 70, 60, 90, 100, 110, 120};
+    uint_fast8_t count = 0;
+    constexpr uint_fast8_t size_sensor_angulo = sizeof(sensor_angulo) / sizeof(sensor_angulo[0]);
 
     while(true) 
     {
         delay(ESPERA);
         motores.forward(VELOCIDADE); 
-
+        
+        // Gira sensor nos ângulos da variável sensor_angulo
         while(sensor)
         {
             servo.write(sensor_angulo[count]);
@@ -41,7 +43,7 @@ void loop_anti_colisao() {
             }
             
             ++count;
-            if(count == sizeof(sensor_angulo) / sizeof(sensor_angulo[0]))
+            if(count == size_sensor_angulo)
                 count = 0;            
         }
 
@@ -66,27 +68,24 @@ void loop_anti_colisao() {
             // Se a pilha estiver vazia, ou seja, sem obstáculos dos lados
             if (pilha.empty()) {
                 if (millis() % 2 == 0) { // Gira para direita
-                    delay(200);
+                    delay(ESPERA_GIRO);
                     giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
                     motores.forward(VELOCIDADE);
                 } else { // Gira para esquerda
-                    delay(200);
+                    delay(ESPERA_GIRO);
                     giraRobo(motores, -VELOCIDADE, VELOCIDADE, ROTACIONA_90);
                     delay(ESPERA);
-                    //motores.forward(VELOCIDADE);
                 }    
             } else if(pilha.top() == OBSTACULO_ESQUERDA) {
-                delay(200);
+                delay(ESPERA_GIRO);
                 removePilha(pilha);
                 giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
-                delay(200);
-                //motores.forward(VELOCIDADE);     
+                delay(200);   
             } else {
-                delay(200);
+                delay(ESPERA_GIRO);
                 removePilha(pilha);
                 giraRobo(motores,-VELOCIDADE, VELOCIDADE, ROTACIONA_90);
                 delay(200);
-                //motores.forward(VELOCIDADE);     
             }                
         }
 
