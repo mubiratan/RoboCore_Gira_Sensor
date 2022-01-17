@@ -12,12 +12,12 @@ const uint_fast8_t PINO_ECHO = 26;
 const uint_fast8_t DISTANCIA_OBSTACULO = 25;
 const uint_fast8_t DISTANCIA_OBSTACULO_LONGE = 40;
 //declaracao das variaveis que armazenam a velocidade de giro e de reta dos motores do robo
-const uint_fast8_t VELOCIDADE = 70;
+const uint_fast8_t VELOCIDADE = 80;
 //declaracao da variavel que armazena o tempo de espera entre leituras do sensor
 const uint_fast8_t ESPERA = 100;
 const uint_fast8_t ESPERA_GIRO = 200;
 //declaracao da variavel que armazena o tempo que os movimentos de desvio irao durar
-const unsigned int ESPERA_MOVIMENTO = 2000;
+const unsigned int ESPERA_MOVIMENTO = 1000;
 const unsigned int ROTACIONA_90 = ESPERA_MOVIMENTO;
 constexpr unsigned int ROTACIONA_180 = ESPERA_MOVIMENTO * 2;
 
