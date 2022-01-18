@@ -24,7 +24,11 @@ constexpr unsigned int ROTACIONA_180 = ESPERA_MOVIMENTO * 2;
 // Status na Pilha
 const uint_fast8_t OBSTACULO_FRENTE = 0, OBSTACULO_DIREITA = 1, OBSTACULO_ESQUERDA = 2;
 
-static uint_fast8_t angulo[] = {0, 30, 150, 180};
+static uint_fast8_t angulo[] = {0, 30, 150};
+
+// LED
+const int LED_VESPA = 15;
+const uint32_t TEMPO_ATUALIZACAO_VBAT = 60000; // [ms]
 
 //Servo
 const uint16_t SERVO_MAX = 2200;

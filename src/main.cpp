@@ -14,9 +14,6 @@
 TaskHandle_t Task1;
 VespaBattery vbat;
 
-const int LED_Vespa = 15;
-const uint32_t TEMPO_ATUALIZACAO_VBAT = 60000; // [ms]
-
 /** Tarefa em Core separado
 **  Se a bateria ficar com a voltagem abaixo de 5V, o LED irá piscar
 **/
@@ -31,9 +28,9 @@ void Task1code( void * pvParameters ) {
     {
       while(true)
       {
-        digitalWrite(LED_Vespa, HIGH);
+        digitalWrite(LED_VESPA, HIGH);
         delay(300);
-        digitalWrite(LED_Vespa, LOW);
+        digitalWrite(LED_VESPA, LOW);
         delay(300);
       }
     }
@@ -43,7 +40,7 @@ void Task1code( void * pvParameters ) {
 
 void setup() {
   // Setup da Task para o core 0 para verificar a bateria
-  pinMode(LED_Vespa, OUTPUT);
+  pinMode(LED_VESPA, OUTPUT);
 
   xTaskCreatePinnedToCore(
                   Task1code,   /* Task function. */

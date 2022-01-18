@@ -2,6 +2,7 @@
 #include "AntiColisao.hpp"
 #include "RoboCore_Vespa.h"
 #include "Helper.hpp"
+#include <vector>
 
 VespaServo servo;
 VespaMotors motores;
