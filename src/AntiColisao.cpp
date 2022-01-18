@@ -22,7 +22,7 @@ void loop_anti_colisao() {
     // Pilha 
     std::stack<uint_fast8_t> pilha{};
     bool sensor = true;
-    uint_fast8_t sensor_angulo[] = {90, 80, 70, 60, 90, 100, 110, 120};
+    uint_fast8_t sensor_angulo[] = {90, 80, 70, 60, 90, 100, 110, 120, 130};
     uint_fast8_t count = 0;
     constexpr uint_fast8_t size_sensor_angulo = sizeof(sensor_angulo) / sizeof(sensor_angulo[0]);
 
