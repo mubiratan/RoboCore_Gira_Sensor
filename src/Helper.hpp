@@ -40,10 +40,10 @@ const uint_fast8_t WAIT_TURN_SENSOR = 300;
 const uint_fast8_t SMALLER_TURN_SENSOR_WAIT = 150;
 
 // Functions
-void walkBackwards(VespaMotors &, const uint_fast8_t espera);
-void spinsRobot(VespaMotors &motores, const uint_fast8_t &, const uint_fast8_t &, const uint_fast8_t &);
+void walkBackwards(VespaMotors &, const uint_fast8_t);
+void spinsRobot(VespaMotors &motors, const uint_fast8_t &, const uint_fast8_t &, const uint_fast8_t &);
 void checksObstacles(VespaServo &, std::stack<uint_fast8_t> &);
 int ultrasonicSensor();
-void removeStack(std::stack<uint_fast8_t> &pilha);
+void removeStack(std::stack<uint_fast8_t> &);
 
 #endif
