@@ -1,75 +1,74 @@
 #include <stack>
 #include "Helper.hpp"
 
-// Anda para trás
-void andaParaTras(VespaMotors &motores, const uint_fast8_t espera_movimento)
+// Walk backwards
+void walkBackwards(VespaMotors &motores, const uint_fast8_t espera_movimento)
 {
-    // Anda para trás
-    motores.stop(); //para os motores do robo
-    delay(ESPERA);
-    motores.backward(VELOCIDADE); //recua o robo girando os motores para tras
-    delay(espera_movimento); //matem o movimento do robo
-    motores.stop(); //para os motores do robo
+    motores.stop(); // stop the robot's motors
+    delay(WAIT);
+    motores.backward(SPEED); // move the robot backwards by turning the motors backwards
+    delay(espera_movimento); // maintain the robot's movement
+    motores.stop(); // stop the robot's motors
 }
 
-// Gira o robô para os lados
-void giraRobo(VespaMotors &motores, const uint_fast8_t &velocidade, const uint_fast8_t &velocidade2, const uint_fast8_t &tempo_espera)
-{   
-    delay(ESPERA);
+// Spin the robot to the sides
+void spinsRobot(VespaMotors &motores, const uint_fast8_t &velocidade, const uint_fast8_t &velocidade2, const uint_fast8_t &tempo_espera)
+{
+    delay(WAIT);
     motores.turn(velocidade, velocidade2);
-    delay(tempo_espera); //matem o movimento do robo
-    motores.stop(); //para os motores do robo
-    delay(ESPERA);
+    delay(tempo_espera); // maintain the robot's movement
+    motores.stop(); // stop the robot's motors
+    delay(WAIT);
 }
 
-// Gira o robô para os lados e verifica se tem obstáculos 
-void verificaObstaculos(VespaServo &servo, std::stack<uint_fast8_t> &pilha) 
+// Spin the robot to the sides and check for obstacles
+void checksObstacles(VespaServo &servo, std::stack<uint_fast8_t> &pilha)
 {
-    removePilha(pilha);
+    removeStack(pilha);
     uint_fast8_t contadorDireita = 0;
     uint_fast8_t contadorEsquerda = 0;
 
-    for(int x = 0; x < sizeof(angulo) / sizeof(angulo[0]); x++)
+    for(int x = 0; x < sizeof(ANGLES) / sizeof(ANGLES[0]); x++)
     {
-        // Gira Sensor
-        servo.write(angulo[x]);
-        delay(ESPERA_GIRO_SENSOR);
-        
-        delay(ESPERA);
-        if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO)
+        // Spin Sensor
+        servo.write(ANGLES[x]);
+        delay(WAIT_TURN_SENSOR);
+
+        delay(WAIT);
+        if (ultrasonicSensor() <= OBSTACLE_DISTANCE)
         {
-            if(angulo[x] < 90 && contadorDireita == 0) 
+            if(ANGLES[x] < 90 && contadorDireita == 0)
             {
-                pilha.push(OBSTACULO_DIREITA);
+                pilha.push(RIGHT_OBSTACLE);
                 ++contadorDireita;
-            }   
-            else if (angulo[x] > 90 && contadorEsquerda == 0)
+            }
+            else if (ANGLES[x] > 90 && contadorEsquerda == 0)
             {
-                pilha.push(OBSTACULO_ESQUERDA);
+                pilha.push(LEFT_OBSTACLE);
                 ++contadorEsquerda;
             }
         }
     }
 
-    // Volta pra o centro
-    delay(ESPERA_GIRO_SENSOR);
-    servo.write(90);    
+    // Return to center
+    delay(WAIT_TURN_SENSOR);
+    servo.write(90);
 }
 
-//funcao para a leitura do sensor
-int sensor_ultrassonico() 
+// Function to read the sensor
+int ultrasonicSensor()
 {
-    //realiza o pulso de 10 microsegundos no trigger do sensor
+    // Perform a 10 microsecond pulse on the sensor's trigger
     digitalWrite(PINO_TRIGGER, HIGH);
     delayMicroseconds(10);
     digitalWrite(PINO_TRIGGER, LOW);
 
-    //mede o pulso em microsegundos retornado para o echo do sensor
-    //e converte o tempo para distancia divindo por 58
+    // Measure the pulse in microseconds returned to the sensor's echo
+    // and convert the time to distance by dividing by 58
     return pulseIn(PINO_ECHO, HIGH) / 58;
 }
 
-void removePilha(std::stack<uint_fast8_t> &pilha)
+void removeStack(std::stack<uint_fast8_t> &pilha)
 {
     for(int x = 0; x < pilha.size(); x++)
         pilha.pop();

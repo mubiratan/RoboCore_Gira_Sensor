@@ -1,11 +1,11 @@
-# Anti-colisao-verifica-lados
+# Anti-collision-check-sides
 
-Foi escrito para o hardware ESP32 compatível com a arquitetura Arduino.
+It was written for ESP32 hardware compatible with the Arduino architecture.
 
-O programa foi escrito em C++ usando o plugin PlatformIO no VSCode e a biblioteca "RoboCore_Vespa".
+The program was written in C++ using the PlatformIO plugin in VSCode and the "RoboCore_Vespa" library.
 
-1) Robô inicia andando para a frente;
-2) Se achar um obstáculo, para, vira o sensor para esquerda e direita, se encontrar obstáculos grava na stack;
-3) Se tiver obstáculos nos dois lados, o robô deve andar para traś por um tempo definido e verificar novamente se existem obstáculos;
-4) Se encontrar apenas um obstáculo, segue para o lado oposto, ex: encontrou na direita, gira em 90 graus e segue para esquerda.
-5) Se ambos os lados não tiverem obstáculos, faz um sorteio de qual lado seguir.
+1) Robot starts moving forward;
+2) If it finds an obstacle, it stops, turns the sensor to the left and right, if it finds obstacles it records them in the stack;
+3) If there are obstacles on both sides, the robot should move backward for a defined time and check again for obstacles;
+4) If it finds only one obstacle, it moves to the opposite side, e.g., if it finds one on the right, it turns 90 degrees and moves to the left.
+5) If both sides have no obstacles, it randomly chooses which side to follow.

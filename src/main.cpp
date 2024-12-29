@@ -1,11 +1,11 @@
 /********************************************************
- * RoboCore - Kit Robo Explorer - Robo Anticolisao
- * 
- * O robo fica constantemente medindo a distancia do
- * sensor ultrassonico e, quando a distancia for menor que 
- * a distancia de obstaculo configurada, o robo ira girar
- * para a direita ou para a esquerda, desviando do 
- * obstaculo e voltando a andar para frente.
+* RoboCore - Kit Robo Explorer - Anti-Collision Robot
+ *
+ * The robot constantly measures the distance from the
+ * ultrasonic sensor and, when the distance is less than
+ * the configured obstacle distance, the robot will turn
+ * to the right or left, avoiding the obstacle and
+ * continuing to move forward.
 ********************************************************/
 
 #include "AntiColisao.hpp"
@@ -14,17 +14,17 @@
 TaskHandle_t Task1;
 VespaBattery vbat;
 
-/** Tarefa em Core separado
-**  Se a bateria ficar com a voltagem abaixo de 5V, o LED irá piscar
+/** Task on separate core
+**  If the battery voltage drops below 5V, the LED will blink
 **/
 void Task1code( void * pvParameters ) {
-  uint8_t capacidade;
+  uint8_t capacity;
 
   while(true)
   {
-    capacidade = (vbat.readVoltage() * 100 / 9000);
+    capacity = (vbat.readVoltage() * 100 / 9000);
 
-    if(capacidade < 5.0)
+    if(capacity < 5.0)
     {
       while(true)
       {
@@ -34,12 +34,12 @@ void Task1code( void * pvParameters ) {
         delay(300);
       }
     }
-    delay(TEMPO_ATUALIZACAO_VBAT);
+    delay(TIME_UPDATE_VBAT);
   }
 }
 
 void setup() {
-  // Setup da Task para o core 0 para verificar a bateria
+  // Task setup for core 0 to check battery
   pinMode(LED_VESPA, OUTPUT);
 
   xTaskCreatePinnedToCore(
@@ -49,14 +49,14 @@ void setup() {
                   NULL,        /* parameter of the task */
                   0,           /* priority of the task */
                   &Task1,      /* Task handle to keep track of created task */
-                  0);          /* pin task to core 0 */                  
+                  0);          /* pin task to core 0 */
   delay(500);
-  
-  // Setup do programa principal
-  setup_anti_colisao();
+
+  // Main program setup
+  setup_anti_collision();
 }
 
-// Chama loop principal
+// Call main loop
 void loop() {
-  loop_anti_colisao();  
+  loop_anti_collision();
 }
