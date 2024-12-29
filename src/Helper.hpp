@@ -2,7 +2,6 @@
 #define HELPER_HPP
 
 #include <stack>
-#include <array>
 #include "RoboCore_Vespa.h"
 
 //declaracao dos pinos do sensor

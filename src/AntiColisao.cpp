@@ -7,7 +7,7 @@
 VespaServo servo;
 VespaMotors motores;
 
-void removePilha(std::stack<uint_fast8_t> &pilha);
+//void removePilha(std::stack<uint_fast8_t> &pilha);
 
 enum RobotState {
     MOVING_FORWARD,
