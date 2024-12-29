@@ -5,7 +5,7 @@
 #include "Helper.hpp"
 
 VespaServo servo;
-VespaMotors motores;
+VespaMotors engines;
 
 enum RobotState {
     MOVING_FORWARD,
@@ -13,66 +13,69 @@ enum RobotState {
     AVOIDING_OBSTACLE
 };
 
-RobotState currentState = MOVING_FORWARD;
-unsigned long previousMillis = 0;
-const long interval = ESPERA;
-std::stack<uint_fast8_t> pilha{};
-bool sensor = true;
-uint_fast8_t sensor_angulo[] {90, 80, 70, 60, 90, 100, 110, 120, 130};
-uint_fast8_t count = 0;
-constexpr uint_fast8_t size_sensor_angulo = sizeof(sensor_angulo) / sizeof(sensor_angulo[0]);
+std::stack<uint_fast8_t> move_stack{};
 
-void setup_anti_colisao() {
+unsigned long previousMillis = 0;
+const long interval = WAIT;
+bool sensor = true;
+
+uint_fast8_t sensor_angle[] {90, 80, 70, 60, 90, 100, 110, 120, 130};
+uint_fast8_t count = 0;
+constexpr uint_fast8_t size_sensor_angle = sizeof(sensor_angle) / sizeof(sensor_angle[0]);
+
+RobotState currentState = MOVING_FORWARD;
+
+void setup_anti_collision() {
     pinMode(PINO_TRIGGER, OUTPUT);
     pinMode(PINO_ECHO, INPUT);
     digitalWrite(PINO_TRIGGER, LOW);
     servo.attach(VESPA_SERVO_S4, SERVO_MIN, SERVO_MAX);
 }
 
-void loop_anti_colisao() {
+void loop_anti_collision() {
     unsigned long currentMillis = millis();
     if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
 
         switch (currentState) {
             case MOVING_FORWARD:
-                motores.forward(VELOCIDADE);
-                if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO) {
-                    motores.stop();
+                engines.forward(SPEED);
+                if (ultrasonicSensor() <= OBSTACLE_DISTANCE) {
+                    engines.stop();
                     currentState = CHECKING_OBSTACLE;
                 }
                 break;
 
             case CHECKING_OBSTACLE:
-                servo.write(sensor_angulo[count]);
-                if (sensor_ultrassonico() <= DISTANCIA_OBSTACULO) {
-                    motores.stop();
-                    verificaObstaculos(servo, pilha);
+                servo.write(sensor_angle[count]);
+                if (ultrasonicSensor() <= OBSTACLE_DISTANCE) {
+                    engines.stop();
+                    checksObstacles(servo, move_stack);
                     currentState = AVOIDING_OBSTACLE;
                 }
                 ++count;
-                if (count == size_sensor_angulo) count = 0;
+                if (count == size_sensor_angle) count = 0;
                 break;
 
             case AVOIDING_OBSTACLE:
-                if (pilha.size() >= 2) {
-                    removePilha(pilha);
-                    andaParaTras(motores, ESPERA_MOVIMENTO);
-                    verificaObstaculos(servo, pilha);
-                } else if (pilha.empty()) {
+                if (move_stack.size() >= 2) {
+                    removeStack(move_stack);
+                    walkBackwards(engines, WAIT_MOTION);
+                    checksObstacles(servo, move_stack);
+                } else if (move_stack.empty()) {
                     if (millis() % 2 == 0) {
-                        giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
+                        spinsRobot(engines, SPEED, -SPEED, ROTATION_90);
                     } else {
-                        giraRobo(motores, -VELOCIDADE, VELOCIDADE, ROTACIONA_90);
+                        spinsRobot(engines, -SPEED, SPEED, ROTATION_90);
                     }
-                    motores.forward(VELOCIDADE);
+                    engines.forward(SPEED);
                     currentState = MOVING_FORWARD;
-                } else if (pilha.top() == OBSTACULO_ESQUERDA) {
-                    removePilha(pilha);
-                    giraRobo(motores, VELOCIDADE, -VELOCIDADE, ROTACIONA_90);
+                } else if (move_stack.top() == LEFT_OBSTACLE) {
+                    removeStack(move_stack);
+                    spinsRobot(engines, SPEED, -SPEED, ROTATION_90);
                 } else {
-                    removePilha(pilha);
-                    giraRobo(motores, -VELOCIDADE, VELOCIDADE, ROTACIONA_90);
+                    removeStack(move_stack);
+                    spinsRobot(engines, -SPEED, SPEED, ROTATION_90);
                 }
                 break;
         }
