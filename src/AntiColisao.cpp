@@ -13,15 +13,15 @@ enum RobotState {
     AVOIDING_OBSTACLE
 };
 
-std::stack<uint_fast8_t> move_stack{};
+std::stack<uint_fast8_t> moveStack{};
 
 unsigned long previousMillis = 0;
 const long interval = WAIT;
 bool sensor = true;
 
-uint_fast8_t sensor_angle[] {90, 80, 70, 60, 90, 100, 110, 120, 130};
+uint_fast8_t sensorAngles[] {90, 80, 70, 60, 90, 100, 110, 120, 130};
 uint_fast8_t count = 0;
-constexpr uint_fast8_t size_sensor_angle = sizeof(sensor_angle) / sizeof(sensor_angle[0]);
+constexpr uint_fast8_t size_sensor_angle = sizeof(sensorAngles) / sizeof(sensorAngles[0]);
 
 RobotState currentState = MOVING_FORWARD;
 
@@ -47,10 +47,10 @@ void loop_anti_collision() {
                 break;
 
             case CHECKING_OBSTACLE:
-                servo.write(sensor_angle[count]);
+                servo.write(sensorAngles[count]);
                 if (ultrasonicSensor() <= OBSTACLE_DISTANCE) {
                     engines.stop();
-                    checksObstacles(servo, move_stack);
+                    checksObstacles(servo, moveStack);
                     currentState = AVOIDING_OBSTACLE;
                 }
                 ++count;
@@ -58,11 +58,11 @@ void loop_anti_collision() {
                 break;
 
             case AVOIDING_OBSTACLE:
-                if (move_stack.size() >= 2) {
-                    removeStack(move_stack);
+                if (moveStack.size() >= 2) {
+                    removeStack(moveStack);
                     walkBackwards(engines, WAIT_MOTION);
-                    checksObstacles(servo, move_stack);
-                } else if (move_stack.empty()) {
+                    checksObstacles(servo, moveStack);
+                } else if (moveStack.empty()) {
                     if (millis() % 2 == 0) {
                         spinsRobot(engines, SPEED, -SPEED, ROTATION_90);
                     } else {
@@ -70,11 +70,11 @@ void loop_anti_collision() {
                     }
                     engines.forward(SPEED);
                     currentState = MOVING_FORWARD;
-                } else if (move_stack.top() == LEFT_OBSTACLE) {
-                    removeStack(move_stack);
+                } else if (moveStack.top() == LEFT_OBSTACLE) {
+                    removeStack(moveStack);
                     spinsRobot(engines, SPEED, -SPEED, ROTATION_90);
                 } else {
-                    removeStack(move_stack);
+                    removeStack(moveStack);
                     spinsRobot(engines, -SPEED, SPEED, ROTATION_90);
                 }
                 break;

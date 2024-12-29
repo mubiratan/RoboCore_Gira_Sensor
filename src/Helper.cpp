@@ -2,31 +2,31 @@
 #include "Helper.hpp"
 
 // Walk backwards
-void walkBackwards(VespaMotors &motores, const uint_fast8_t espera_movimento)
+void walkBackwards(VespaMotors &motors, const uint_fast8_t waitMovement)
 {
-    motores.stop(); // stop the robot's motors
+    motors.stop();
     delay(WAIT);
-    motores.backward(SPEED); // move the robot backwards by turning the motors backwards
-    delay(espera_movimento); // maintain the robot's movement
-    motores.stop(); // stop the robot's motors
+    motors.backward(SPEED);
+    delay(waitMovement);
+    motors.stop();
 }
 
 // Spin the robot to the sides
-void spinsRobot(VespaMotors &motores, const uint_fast8_t &velocidade, const uint_fast8_t &velocidade2, const uint_fast8_t &tempo_espera)
+void spinsRobot(VespaMotors &motors, const uint_fast8_t &speed, const uint_fast8_t &speed2, const uint_fast8_t &waitingTime)
 {
     delay(WAIT);
-    motores.turn(velocidade, velocidade2);
-    delay(tempo_espera); // maintain the robot's movement
-    motores.stop(); // stop the robot's motors
+    motors.turn(speed, speed2);
+    delay(waitingTime);
+    motors.stop();
     delay(WAIT);
 }
 
 // Spin the robot to the sides and check for obstacles
-void checksObstacles(VespaServo &servo, std::stack<uint_fast8_t> &pilha)
+void checksObstacles(VespaServo &servo, std::stack<uint_fast8_t> &stack)
 {
-    removeStack(pilha);
-    uint_fast8_t contadorDireita = 0;
-    uint_fast8_t contadorEsquerda = 0;
+    removeStack(stack);
+    uint_fast8_t RIGHT_COUNTER = 0;
+    uint_fast8_t LEFT_COUNTER = 0;
 
     for(int x = 0; x < sizeof(ANGLES) / sizeof(ANGLES[0]); x++)
     {
@@ -37,15 +37,15 @@ void checksObstacles(VespaServo &servo, std::stack<uint_fast8_t> &pilha)
         delay(WAIT);
         if (ultrasonicSensor() <= OBSTACLE_DISTANCE)
         {
-            if(ANGLES[x] < 90 && contadorDireita == 0)
+            if(ANGLES[x] < 90 && RIGHT_COUNTER == 0)
             {
-                pilha.push(RIGHT_OBSTACLE);
-                ++contadorDireita;
+                stack.push(RIGHT_OBSTACLE);
+                ++RIGHT_COUNTER;
             }
-            else if (ANGLES[x] > 90 && contadorEsquerda == 0)
+            else if (ANGLES[x] > 90 && LEFT_COUNTER == 0)
             {
-                pilha.push(LEFT_OBSTACLE);
-                ++contadorEsquerda;
+                stack.push(LEFT_OBSTACLE);
+                ++LEFT_COUNTER;
             }
         }
     }
@@ -68,8 +68,9 @@ int ultrasonicSensor()
     return pulseIn(PINO_ECHO, HIGH) / 58;
 }
 
-void removeStack(std::stack<uint_fast8_t> &pilha)
+void removeStack(std::stack<uint_fast8_t> &stack)
 {
-    for(int x = 0; x < pilha.size(); x++)
-        pilha.pop();
+    const uint_fast8_t size = stack.size();
+    for(int x = 0; x < size; ++x)
+        stack.pop();
 }
